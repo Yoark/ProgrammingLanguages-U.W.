@@ -4,9 +4,11 @@
 (* All the tests should evaluate to true. For example, the REPL should say: val test1 = true : bool *)
 
 val test1 = all_except_option ("string", ["string"]) = SOME []
-
+val test1.2 = all_except_option ("string",[]) = NONE
+val test1.3 = all_except_option ("string",["saf"]) = NONE
+val test1.4 = all_except_option("string",["asf","string","faasf"]) = SOME ["asf","faasf"]
 val test2 = get_substitutions1 ([["foo"],["there"]], "foo") = []
-
+val test2.1 = get_substitutions1([["Fred","Fredrick"],["Jeff","Jeffrey"],["Geoff","Jeff","Jeffrey"]], "Jeff") = ["Jeffrey","Geoff","Jeffrey"];
 val test3 = get_substitutions2 ([["foo"],["there"]], "foo") = []
 
 val test4 = similar_names ([["Fred","Fredrick"],["Elizabeth","Betty"],["Freddie","Fred","F"]], {first="Fred", middle="W", last="Smith"}) =

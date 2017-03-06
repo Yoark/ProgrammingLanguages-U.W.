@@ -20,3 +20,61 @@ datatype move = Discard of card | Draw
 exception IllegalMove
 
 (* put your solutions for problem 2 here *)
+fun all_except_option (x,xs)=
+  case xs of
+      [] => NONE
+    | s::ss => if same_string(x,s)
+              then SOME ss
+              else case all_except_option(x,ss) of
+                       SOME strings => SOME (s::strings)
+                     | NONE => NONE
+
+
+fun get_substitutions1(subs,s)=
+  case subs of
+      [] => []
+    | x::xs => case all_except_option(s,x) of
+                  NONE => get_substitutions1(xs,s)
+                | SOME ss => ss @ get_substitutions1(xs,s)
+
+fun get_substitutions2(subs,s)=
+  let fun f (subs,s,strings)=
+        case subs of
+            [] => strings
+          | x::xs => case all_except_option(s,x) of
+                        NONE => f(xs,s,strings)
+                      | SOME ss => f(xs,s,ss@strings)
+  in f(subs,s,[])
+  end
+
+fun similar_names(lstlst,{first=x,last=y,middle=z})=
+  let val sub_value = get_substitutions1(lstlst,x)
+  in let fun f(lst)=
+         case lst of
+             [] => []
+          | s::ss => {first=s,last=y,middle=z}::f(ss)
+     in {first=x,last=y,middle=z}::f(sub_value)
+     end
+  end
+(*with more efficieny*)
+fun similar_names2(lstlst,{first=x,last=y,middle=z})=
+  let val sub_value = get_substitutions2(lstlst,x)
+  in let fun f(lst, namelst)=
+         case lst of
+             [] => namelst
+          | s::ss => f(ss,{first=s,last=y,middle=z}::namelst)
+     in {first=x,last=y,middle=z}::f(sub_value, [])
+     end
+  end
+
+fun card_color(x)=
+  case x of
+      (Spades,_) => Black
+   |  (Clubs,_) => Black
+   |  _ => Red
+
+fun card_value(x)=
+  case x of
+      (_,Num n) => n
+    | (_, Ace) => 11
+    | _ => 10
