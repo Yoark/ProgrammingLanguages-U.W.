@@ -78,3 +78,35 @@ fun card_value(x)=
       (_,Num n) => n
     | (_, Ace) => 11
     | _ => 10
+fun remove_card(cs,c,e)=
+  case cs of
+      [] => raise e
+    | x::xs => if x=c
+              then xs
+              else x::remove_card(xs,c,e)
+
+fun all_same_color(cs)=
+  case cs of
+      [] => true
+    | x::[] => true
+    | x::y::xs => card_color(x)=card_color(y) andalso all_same_color(y::xs)
+
+fun sum_cards(cs)=
+  let fun f (cd,acm)=
+        case cd of
+            [] => acm
+          | x::xs => f(xs, card_value(x)+acm)
+  in f(cs, 0)
+  end
+      
+fun score(hc, goal)=
+  let val sum = sum_cards(hc)
+  in let val pre = if sum >goal
+     then 3*(sum-goal)
+     else goal-sum
+     in  if all_same_color(hc)
+         then pre div 2
+         else pre
+     end
+  end
+      
