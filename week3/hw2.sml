@@ -7,19 +7,6 @@ fun same_string(s1 : string, s2 : string) =
     s1 = s2
 
 (* put your solutions for problem 1 here *)
-
-(* you may assume that Num is always used with values 2, 3, ..., 10
-   though it will not really come up *)
-datatype suit = Clubs | Diamonds | Hearts | Spades
-datatype rank = Jack | Queen | King | Ace | Num of int 
-type card = suit * rank
-
-datatype color = Red | Black
-datatype move = Discard of card | Draw 
-
-exception IllegalMove
-
-(* put your solutions for problem 2 here *)
 fun all_except_option (x,xs)=
   case xs of
       [] => NONE
@@ -67,6 +54,19 @@ fun similar_names2(lstlst,{first=x,last=y,middle=z})=
      end
   end
 
+(* you may assume that Num is always used with values 2, 3, ..., 10
+   though it will not really come up *)
+datatype suit = Clubs | Diamonds | Hearts | Spades
+datatype rank = Jack | Queen | King | Ace | Num of int 
+type card = suit * rank
+
+datatype color = Red | Black
+datatype move = Discard of card | Draw 
+
+exception IllegalMove
+
+(* put your solutions for problem 2 here *)
+
 fun card_color(x)=
   case x of
       (Spades,_) => Black
@@ -98,7 +98,7 @@ fun sum_cards(cs)=
           | x::xs => f(xs, card_value(x)+acm)
   in f(cs, 0)
   end
-      
+
 fun score(hc, goal)=
   let val sum = sum_cards(hc)
   in let val pre = if sum >goal
@@ -109,4 +109,17 @@ fun score(hc, goal)=
          else pre
      end
   end
-      
+
+fun officiate (cl,mv,goal)=
+  let fun stat(cl,mv,hc)=
+        case (cl,mv,hc) of
+            (cd,[],hc) => score(hc,goal)
+          | ([],Draw::mv,hc) => score(hc,goal)
+          | (cd,Discard(c)::mv,hc) =>
+            stat(cd,mv,remove_card(hc,c,IllegalMove))
+          | (c::cd,Draw::mv,hc) => if sum_cards(c::hc) > goal
+                                  then score(c::hc,goal)
+                                  else stat(cd,mv,c::hc)
+  in stat(cl,mv,[])
+  end
+

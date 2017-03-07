@@ -41,3 +41,46 @@ val test13 = ((officiate([(Clubs,Jack),(Spades,Num(8))],
               handle IllegalMove => true)
              
              
+fun card_value2(x)=
+  case x of
+      (_,Num n) => n
+    | (_, Ace) => 1
+    | _ => 10
+
+fun sum_cards2(cs,v)=
+  let fun f (cd,acm)=
+        case cd of
+            [] => acm
+          | x::xs => if v=1
+                    then f(xs, card_value2(x)+acm)
+                    else f(xs, card_value(x)+acm)
+  in f(cs, 0)
+  end
+      
+fun score_challenge(hc, goal)=
+  let fun f sum=
+         if sum >goal then 3*(sum-goal)
+         else goal-sum
+  in let val sum1=sum_cards2(hc,1)
+     in let val sum2=sum_cards2(hc,11)
+        in let val pre = if sum1<sum2 then sum1 else sum2
+           in if all_same_color(hc)
+              then pre div 2
+              else pre
+           end
+        end
+     end
+  end
+ 
+fun officiate_challenge(cl,mv,goal)=
+  let fun stat(cl,mv,hc)=
+        case (cl,mv,hc) of
+            (cd,[],hc) => score_challenge(hc,goal)
+          | ([],Draw::mv,hc) => score_challenge(hc,goal)
+          | (cd,Discard(c)::mv,hc) =>
+            stat(cd,mv,remove_card(hc,c,IllegalMove))
+          | (c::cd,Draw::mv,hc) => if sum_cards(c::hc) > goal
+                                  then score_challenge(c::hc,goal)
+                                  else stat(cd,mv,c::hc)
+  in stat(cl,mv,[])
+  end
