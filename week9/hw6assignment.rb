@@ -38,9 +38,9 @@ class MyBoard < Board
     rotate_clockwise
   end
 
-  def cheat
+  def cheat_n
     if !game_over? and @game.is_running?
-      if @current_block.current_rotation != [[0,0]] and @score >= 100
+      if !@cheat and @score >= 100
         @score -= 100
         @cheat = true
       end
@@ -50,7 +50,7 @@ class MyBoard < Board
   def next_piece
       @current_block = MyPiece.next_piece(@cheat, self)
       @current_pos = nil
-      @cheat = false if @cheat
+      @cheat = false
   end
 
   # store all information for new-added pieces since
@@ -80,7 +80,7 @@ class MyTetris < Tetris
   def key_bindings
     super
     @root.bind('u', proc {@board.rotate_180})
-    @root.bind('c', proc {@board.cheat})
+    @root.bind('c', proc {@board.cheat_n})
   end
 end
 
