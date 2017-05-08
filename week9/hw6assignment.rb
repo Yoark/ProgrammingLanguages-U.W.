@@ -7,8 +7,8 @@ class MyPiece < Piece
   # The constant All_My_Pieces should be declared here
 
   # your enhancements here
-  def self.next_piece (cheat,board)
-    if cheat
+  def self.next_piece (board)
+    if board.cheat
       MyPiece.new([[[0,0]]], board)
     else
       MyPiece.new(All_My_Pieces.sample, board)
@@ -26,13 +26,13 @@ class MyBoard < Board
   # your enhancements here
   def initialize (game)
     @grid = Array.new(num_rows) {Array.new(num_columns)}
-    @current_block = MyPiece.next_piece(@cheat, self)
+    @current_block = MyPiece.next_piece(self)
     @score = 0
     @game = game
     @delay = 500
     @cheat = false
   end
-  
+  attr_reader :cheat 
   def rotate_180
     rotate_clockwise
     rotate_clockwise
@@ -48,7 +48,7 @@ class MyBoard < Board
   end
 
   def next_piece
-      @current_block = MyPiece.next_piece(@cheat, self)
+      @current_block = MyPiece.next_piece(self)
       @current_pos = nil
       @cheat = false
   end
