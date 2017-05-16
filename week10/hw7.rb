@@ -259,8 +259,22 @@ class LineSegment < GeometryValue
   def intersect other
     other.intersectLineSegment self
   end
+  def inbetween(v, end1, end2)
+    ( end1-GeometryExpression::Epsilon <= v && v <= end2 + GeometryExpression::Epsilon) ||
+      (end2 - GeometryExpression::Epsilon <= v  && v <= end1 + GeometryExpression::Epsilon)
+  end
   def intersectPoint p
+    if inbetween(p.x, @x1, @x2) && inbetween(p.y, @y1, @y2) then p
+    else NoPoints.new end
+  end
+  def intersectLine line
     self
+  end
+  def intersectVerticalLine vline
+    self
+  end
+  def intersectLineSegment
+    
   end
 end
 # Note: there is no need for getter methods for the non-value classes
