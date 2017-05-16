@@ -108,6 +108,7 @@ if not ((d2.is_a? Point)and d2.x == ONE and d2.y == TWO)
 end
 
 d = d.preprocess_prog
+puts [d.x1, d.y1, d.x2, d.y2]
 if not (d.x1 == -THREE and d.y1 == -FOUR and d.x2 == ONE and d.y2 == TWO)
 	puts "LineSegment preprocess_prog should make x1 and y1"
 	puts "on the left of x2 and y2"
