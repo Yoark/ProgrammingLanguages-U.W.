@@ -142,8 +142,13 @@ class Point < GeometryValue
     if real_close(@x, vline.x) then self
     else NoPoints.new end
   end
+  def inbetween(v, end1, end2)
+    ((end1-GeometryExpression::Epsilon <= v) && (v <= end2 + GeometryExpression::Epsilon)) ||
+      ((end2 - GeometryExpression::Epsilon <= v)  && (v <= end1 + GeometryExpression::Epsilon))
+  end
   def intersectWithSegmentAsLineResult seg
-    seg.intersectPoint self
+     if inbetween(@x, seg.x1, seg.x2) && inbetween(@y, seg.y1, seg.y2) then p
+    else NoPoints.new end
   end
 end
 class Line < GeometryValue
@@ -259,13 +264,8 @@ class LineSegment < GeometryValue
   def intersect other
     other.intersectLineSegment self
   end
-  def inbetween(v, end1, end2)
-    ( end1-GeometryExpression::Epsilon <= v && v <= end2 + GeometryExpression::Epsilon) ||
-      (end2 - GeometryExpression::Epsilon <= v  && v <= end1 + GeometryExpression::Epsilon)
-  end
   def intersectPoint p
-    if inbetween(p.x, @x1, @x2) && inbetween(p.y, @y1, @y2) then p
-    else NoPoints.new end
+    p.intersectLineSegment self
   end
   def intersectLine line
     self
