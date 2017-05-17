@@ -1,7 +1,6 @@
-(* University of Washington, Programming Languages, Homework 7, hw7.sml 
+(* use* University of Washington, Programming Languages, Homework 7, hw7.sml 
    (See also Ruby code.)
 *)
-
 (* Do not make changes to this code except where you see comments containing
    the word CHANGE. *)
 
@@ -196,13 +195,13 @@ fun eval_prog (e,env) =
 	   | SOME (_,v) => v)
       | Let(s,e1,e2) => eval_prog (e2, ((s, eval_prog(e1,env)) :: env))
       | Intersect(e1,e2) => intersect(eval_prog(e1,env), eval_prog(e2, env))
-      | Shift(x,y,e) =>(case eval_prog(e,env) of
+      | Shift(x,y,exp) =>(case eval_prog(exp,env) of
                            NoPoints => NoPoints
                          |  Point(a,b)=> Point(a+x,b+y)
                          | Line(m, b) => Line(m, (b+y)-m*x)
                          | VerticalLine a => VerticalLine (a+x)
-                         | LineSegment(a,b,c,d) => LineSegment(a+x,b+y,c+x,b+y)
-                         |  _=>Shift(x,y,eval_prog(e, env)))
+                         | LineSegment(a,b,c,d) => LineSegment(a+x,b+y,c+x,d+y)
+                         | _=>Shift(x,y,eval_prog(exp, env)))
                           
 (* CHANGE: Add a case for Shift expressions *)
 
@@ -220,5 +219,5 @@ fun preprocess_prog e=
                               else e
     | Let(s,e1,e2) => Let(s,preprocess_prog e1,preprocess_prog e2)
     | Intersect(e1,e2) => Intersect(preprocess_prog e1, preprocess_prog e2)
-    | Shift(x,y,e) => Shift(x,y, preprocess_prog e)
+    | Shift(x,y,exp) => Shift(x,y, preprocess_prog exp)
     | _ => e
